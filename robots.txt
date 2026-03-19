@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: /php/bgmi_scrims_management/sitemap.xml

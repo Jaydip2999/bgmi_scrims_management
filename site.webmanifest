@@ -1,0 +1,15 @@
+{
+  "name": "BGMI Scrims",
+  "short_name": "BGMI",
+  "start_url": "/php/bgmi_scrims_management/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "icons": [
+    {
+      "src": "/php/bgmi_scrims_management/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
