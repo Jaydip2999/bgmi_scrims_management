@@ -39,5 +39,6 @@ if ($booking) {
 $stmt->execute();
 
 sync_scrim_meta($conn, (int) $payment['scrim_id']);
+create_notification($conn, (int) $payment['user_id'], (int) $payment['scrim_id'], 'system', 'Payment Approved', 'Your payment has been approved and your slot is confirmed for this scrim.', null);
 header("Location: payments.php");
 exit;

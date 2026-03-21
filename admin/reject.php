@@ -17,6 +17,7 @@ if ($payment) {
     $booking->bind_param("ii", $payment['user_id'], $payment['scrim_id']);
     $booking->execute();
     sync_scrim_meta($conn, (int) $payment['scrim_id']);
+    create_notification($conn, (int) $payment['user_id'], (int) $payment['scrim_id'], 'system', 'Payment Rejected', 'Your payment proof was rejected. Please review the payment details and upload a fresh proof.', null);
 }
 
 header("Location: payments.php");

@@ -16,9 +16,9 @@ $items = fetch_notifications($conn, (int) $_SESSION['user_id'], 50);
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="min-h-screen bg-slate-950 text-white">
+<body class="flex min-h-screen flex-col bg-slate-950 text-white">
 <?php include_once __DIR__ . "/../includes/navbar.php"; ?>
-<main class="mx-auto max-w-5xl px-6 py-10">
+<main class="mx-auto w-full max-w-5xl flex-1 px-6 py-10">
   <h1 class="text-4xl font-black">Notifications</h1>
   <div class="mt-8 space-y-4">
     <?php if (!$items): ?>

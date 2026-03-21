@@ -29,9 +29,9 @@ if (isset($_POST['save_room'])) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="min-h-screen bg-slate-950 text-white">
+<body class="flex min-h-screen flex-col bg-slate-950 text-white">
 <?php include_once __DIR__ . "/../includes/navbar.php"; ?>
-<div class="mx-auto max-w-3xl px-6 py-10">
+<div class="mx-auto w-full max-w-3xl flex-1 px-6 py-10">
   <div class="rounded-[2rem] border border-slate-800 bg-slate-900 p-8">
     <h1 class="text-4xl font-black">Room Control</h1>
     <p class="mt-2 text-slate-400"><?php echo h($scrim['title']); ?>. Room details become visible to approved players 10 minutes before match time.</p>

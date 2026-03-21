@@ -17,6 +17,12 @@ if (
     exit;
 }
 
+$identityConflict = find_scrim_identity_conflict($conn, $scrimId, $userId);
+if ($identityConflict) {
+    header("Location: ../pages/payment.php?scrim_id=" . $scrimId . "&error=identity_conflict");
+    exit;
+}
+
 $uploadDir = __DIR__ . "/../assets/payments";
 if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0777, true);
@@ -39,6 +45,8 @@ $booking = $conn->prepare("INSERT INTO bookings (user_id, scrim_id, status)
     ON DUPLICATE KEY UPDATE status = 'pending'");
 $booking->bind_param("ii", $userId, $scrimId);
 $booking->execute();
+
+create_notification($conn, $userId, $scrimId, 'system', 'Payment Submitted', 'Your payment proof has been submitted and is pending admin review.', null);
 
 header("Location: ../pages/scrim-details.php?id=" . $scrimId);
 exit;

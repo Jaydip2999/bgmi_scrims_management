@@ -20,9 +20,9 @@ while ($row = $board->fetch_assoc()) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="min-h-screen bg-slate-950 text-white">
+<body class="flex min-h-screen flex-col bg-slate-950 text-white">
 <?php include_once __DIR__ . "/../includes/navbar.php"; ?>
-<div class="mx-auto max-w-6xl px-6 py-10">
+<div class="mx-auto w-full max-w-6xl flex-1 px-6 py-10">
   <h1 class="text-4xl font-black">Global Leaderboard</h1>
   <p class="mt-2 text-slate-400">Top performers across all finished BGMI scrims.</p>
 

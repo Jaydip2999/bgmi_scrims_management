@@ -54,38 +54,38 @@ $registrationLabel = $canJoin ? 'Open' : (((int) $scrim['available_slots'] <= 0 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="min-h-screen bg-slate-950 text-white">
+<body class="flex min-h-screen flex-col bg-slate-950 text-white">
 <?php include_once __DIR__ . "/../includes/navbar.php"; ?>
-<main class="mx-auto max-w-7xl px-6 py-10">
+<main class="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
   <section class="grid gap-6 lg:grid-cols-[1.15fr_.85fr]">
-    <div class="rounded-2xl border border-slate-800 bg-slate-900 p-8">
+    <div class="rounded-2xl border border-slate-800 bg-slate-900 p-5 sm:p-8">
       <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
           <p class="text-sm uppercase tracking-[0.3em] text-slate-500"><?php echo h($scrim['mode']); ?> | <?php echo h($scrim['map']); ?></p>
-          <h1 class="mt-2 text-4xl font-black"><?php echo h($scrim['title']); ?></h1>
+          <h1 class="mt-2 text-3xl font-black sm:text-4xl"><?php echo h($scrim['title']); ?></h1>
         </div>
         <span class="rounded-md px-4 py-2 text-sm font-semibold <?php echo $canJoin ? 'bg-emerald-500/20 text-emerald-300' : ($registrationLabel === 'Full' ? 'bg-rose-500/20 text-rose-300' : 'bg-slate-800 text-slate-300'); ?>">
           Registration <?php echo $registrationLabel; ?>
         </span>
       </div>
       <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        <div class="rounded-xl bg-slate-950 p-4"><p class="text-sm text-slate-500">Entry Fee</p><p class="mt-2 text-2xl font-bold text-amber-300"><?php echo format_money($scrim['entry_fee']); ?></p></div>
-        <div class="bg-slate-950 p-4"><p class="text-sm text-slate-500">Total Slots</p><p class="mt-2 text-2xl font-bold"><?php echo (int) $scrim['total_slots']; ?></p></div>
-        <div class="rounded-xl bg-slate-950 p-4"><p class="text-sm text-slate-500">Available Slots</p><p class="mt-2 text-2xl font-bold text-cyan-300"><?php echo (int) $scrim['available_slots']; ?></p></div>
-        <div class="bg-slate-950 p-4"><p class="text-sm text-slate-500">Prize Pool</p><p class="mt-2 text-2xl font-bold text-emerald-300"><?php echo format_money($scrim['prize_pool']); ?></p></div>
-        <div class="rounded-xl bg-slate-950 p-4"><p class="text-sm text-slate-500">Match Time</p><p class="mt-2 text-lg font-bold"><?php echo h(date("d M Y, h:i A", strtotime((string) $scrim['match_time']))); ?></p></div>
-        <div class="bg-slate-950 p-4"><p class="text-sm text-slate-500">Registration Closes</p><p class="mt-2 text-lg font-bold text-amber-300"><?php echo $registrationDeadline ? h(date("d M, h:i A", $registrationDeadline)) : '-'; ?></p></div>
+        <div class="rounded-xl bg-slate-950 p-4"><p class="text-sm text-slate-500">Entry Fee</p><p class="mt-2 text-xl font-bold text-amber-300 sm:text-2xl"><?php echo format_money($scrim['entry_fee']); ?></p></div>
+        <div class="rounded-xl bg-slate-950 p-4"><p class="text-sm text-slate-500">Total Slots</p><p class="mt-2 text-xl font-bold sm:text-2xl"><?php echo (int) $scrim['total_slots']; ?></p></div>
+        <div class="rounded-xl bg-slate-950 p-4"><p class="text-sm text-slate-500">Available Slots</p><p class="mt-2 text-xl font-bold text-cyan-300 sm:text-2xl"><?php echo (int) $scrim['available_slots']; ?></p></div>
+        <div class="rounded-xl bg-slate-950 p-4"><p class="text-sm text-slate-500">Prize Pool</p><p class="mt-2 text-xl font-bold text-emerald-300 sm:text-2xl"><?php echo format_money($scrim['prize_pool']); ?></p></div>
+        <div class="rounded-xl bg-slate-950 p-4"><p class="text-sm text-slate-500">Match Time</p><p class="mt-2 text-base font-bold sm:text-lg"><?php echo h(date("d M Y, h:i A", strtotime((string) $scrim['match_time']))); ?></p></div>
+        <div class="rounded-xl bg-slate-950 p-4"><p class="text-sm text-slate-500">Registration Closes</p><p class="mt-2 text-base font-bold text-amber-300 sm:text-lg"><?php echo $registrationDeadline ? h(date("d M, h:i A", $registrationDeadline)) : '-'; ?></p></div>
       </div>
       <div class="mt-4 border border-dashed border-slate-700 bg-slate-950 p-4 text-sm text-slate-400">
         Match countdown: <span id="countdown" class="font-semibold text-amber-300"></span>
       </div>
-      <div class="mt-8 flex flex-wrap gap-3">
+      <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
         <?php if (!isset($_SESSION['user_id'])): ?>
-          <a href="login.php" class="rounded-full bg-amber-400 px-5 py-3 font-semibold text-black">Login to Join</a>
+          <a href="login.php" class="rounded-full bg-amber-400 px-5 py-3 text-center font-semibold text-black">Login to Join</a>
         <?php elseif ($booking): ?>
-          <span class="rounded-full bg-slate-950 px-5 py-3 text-sm text-slate-300">Your Status: <?php echo strtoupper(h($booking['status'])); ?><?php if (!empty($booking['payment_status'])): ?> | Payment: <?php echo strtoupper(h($booking['payment_status'])); ?><?php endif; ?></span>
+          <span class="rounded-2xl bg-slate-950 px-5 py-3 text-sm text-slate-300">Your Status: <?php echo strtoupper(h($booking['status'])); ?><?php if (!empty($booking['payment_status'])): ?> | Payment: <?php echo strtoupper(h($booking['payment_status'])); ?><?php endif; ?></span>
         <?php else: ?>
-          <a href="payment.php?scrim_id=<?php echo $scrimId; ?>" class="rounded-full px-5 py-3 font-semibold <?php echo $canJoin ? 'bg-amber-400 text-black' : 'cursor-not-allowed bg-slate-800 text-slate-500'; ?>"><?php echo $canJoin ? 'Join Scrim' : 'Joining Disabled'; ?></a>
+          <a href="payment.php?scrim_id=<?php echo $scrimId; ?>" class="rounded-full px-5 py-3 text-center font-semibold <?php echo $canJoin ? 'bg-amber-400 text-black' : 'cursor-not-allowed bg-slate-800 text-slate-500'; ?>"><?php echo $canJoin ? 'Join Scrim' : 'Joining Disabled'; ?></a>
         <?php endif; ?>
       </div>
       <?php if (!$canJoin && !$booking): ?>
@@ -94,7 +94,7 @@ $registrationLabel = $canJoin ? 'Open' : (((int) $scrim['available_slots'] <= 0 
     </div>
 
     <div class="space-y-6">
-      <section class="border border-slate-800 bg-slate-900 p-6">
+      <section class="rounded-2xl border border-slate-800 bg-slate-900 p-5 sm:p-6">
         <h2 class="text-xl font-bold">Prize Pool</h2>
         <p class="mt-1 text-sm text-slate-400">Auto-generated from entry fee and total slots, with manual admin override support.</p>
         <div class="mt-5 space-y-3">
@@ -122,27 +122,27 @@ $registrationLabel = $canJoin ? 'Open' : (((int) $scrim['available_slots'] <= 0 
   </section>
 
   <section class="mt-6 grid gap-6 lg:grid-cols-2">
-    <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-      <h2 class="text-2xl font-bold">Registered Teams / Players</h2>
+    <div class="rounded-2xl border border-slate-800 bg-slate-900 p-5 sm:p-6">
+      <h2 class="text-xl font-bold sm:text-2xl">Registered Teams / Players</h2>
       <div class="mt-4 space-y-3">
         <?php if (!$players): ?><p class="text-slate-400">No approved registrations yet.</p><?php endif; ?>
         <?php foreach ($players as $player): ?>
-          <div class="flex items-center justify-between rounded-xl bg-slate-950 px-4 py-3">
-            <span><?php echo h(player_label($player)); ?></span>
-            <span class="text-sm text-slate-400">Slot <?php echo $player['slot_number'] ? (int) $player['slot_number'] : '-'; ?></span>
+          <div class="flex items-center justify-between gap-3 rounded-xl bg-slate-950 px-4 py-3">
+            <span class="min-w-0 truncate"><?php echo h(player_label($player)); ?></span>
+            <span class="shrink-0 text-sm text-slate-400">Slot <?php echo $player['slot_number'] ? (int) $player['slot_number'] : '-'; ?></span>
           </div>
         <?php endforeach; ?>
       </div>
     </div>
 
-    <div class="border border-slate-800 bg-slate-900 p-6">
-      <h2 class="text-2xl font-bold">Rules</h2>
+    <div class="rounded-2xl border border-slate-800 bg-slate-900 p-5 sm:p-6">
+      <h2 class="text-xl font-bold sm:text-2xl">Rules</h2>
       <div class="mt-4 rounded-xl bg-slate-950 p-4 text-slate-300"><?php echo nl2br(h($scrim['rules_text'] ?: "No extra rules added yet.")); ?></div>
     </div>
   </section>
 
-  <section class="mt-6 border border-slate-800 bg-slate-900 p-6">
-    <h2 class="text-2xl font-bold">Leaderboard</h2>
+  <section class="mt-6 rounded-2xl border border-slate-800 bg-slate-900 p-5 sm:p-6">
+    <h2 class="text-xl font-bold sm:text-2xl">Leaderboard</h2>
     <div class="mt-5 grid gap-4 md:grid-cols-3">
       <div class="border border-amber-500/20 bg-amber-500/10 p-4">
         <p class="text-xs uppercase tracking-[0.25em] text-amber-300">Top Rank</p>

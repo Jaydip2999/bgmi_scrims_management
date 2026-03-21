@@ -20,6 +20,16 @@ if (!registration_is_open($scrim)) {
     exit;
 }
 
+$identityConflict = find_scrim_identity_conflict($conn, $scrimId, $userId);
+if ($identityConflict) {
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'identity_conflict',
+        'detail' => scrim_identity_conflict_message($identityConflict['field']),
+    ]);
+    exit;
+}
+
 $stmt = $conn->prepare("INSERT INTO bookings (user_id, scrim_id, status)
     VALUES (?, ?, 'pending')
     ON DUPLICATE KEY UPDATE status = 'pending'");

@@ -242,6 +242,141 @@ function format_money($amount): string
     return "Rs " . number_format((float) $amount, 2);
 }
 
+function normalize_phone(?string $phone): string
+{
+    $digits = preg_replace('/\D+/', '', (string) $phone);
+    if ($digits === null) {
+        return '';
+    }
+    if (strlen($digits) === 12 && substr($digits, 0, 2) === '91') {
+        return substr($digits, -10);
+    }
+    if (strlen($digits) > 10) {
+        return substr($digits, -10);
+    }
+    return $digits;
+}
+
+function normalize_bgmi_uid(?string $uid): string
+{
+    $normalized = preg_replace('/[^A-Za-z0-9]/', '', strtoupper(trim((string) $uid)));
+    return $normalized ?? '';
+}
+
+function find_user_identity_conflict(mysqli $conn, string $email, string $phone, string $bgmiUid, int $excludeUserId = 0): ?array
+{
+    $email = strtolower(trim($email));
+    $phone = normalize_phone($phone);
+    $bgmiUid = normalize_bgmi_uid($bgmiUid);
+
+    $sql = "SELECT id, name, email, phone, bgmi_uid FROM users";
+    if ($excludeUserId > 0) {
+        $sql .= " WHERE id <> " . (int) $excludeUserId;
+    }
+
+    $rows = $conn->query($sql);
+    while ($row = $rows->fetch_assoc()) {
+        if ($email !== '' && strtolower(trim((string) $row['email'])) === $email) {
+            return ['field' => 'email', 'user' => $row];
+        }
+        if ($phone !== '' && normalize_phone((string) $row['phone']) !== '' && normalize_phone((string) $row['phone']) === $phone) {
+            return ['field' => 'phone', 'user' => $row];
+        }
+        if ($bgmiUid !== '' && normalize_bgmi_uid((string) $row['bgmi_uid']) !== '' && normalize_bgmi_uid((string) $row['bgmi_uid']) === $bgmiUid) {
+            return ['field' => 'bgmi_uid', 'user' => $row];
+        }
+    }
+
+    return null;
+}
+
+function identity_conflict_message(string $field): string
+{
+    if ($field === 'phone') {
+        return 'This phone number is already linked to another account.';
+    }
+    if ($field === 'bgmi_uid') {
+        return 'This BGMI UID is already linked to another account.';
+    }
+    return 'This email is already registered.';
+}
+
+function find_scrim_identity_conflict(mysqli $conn, int $scrimId, int $userId): ?array
+{
+    $currentUser = $conn->prepare("SELECT id, name, phone, bgmi_uid FROM users WHERE id = ? LIMIT 1");
+    $currentUser->bind_param("i", $userId);
+    $currentUser->execute();
+    $user = $currentUser->get_result()->fetch_assoc();
+    if (!$user) {
+        return null;
+    }
+
+    $phone = normalize_phone((string) ($user['phone'] ?? ''));
+    $bgmiUid = normalize_bgmi_uid((string) ($user['bgmi_uid'] ?? ''));
+    if ($phone === '' && $bgmiUid === '') {
+        return null;
+    }
+
+    $stmt = $conn->prepare("SELECT b.user_id, b.status, u.name, u.team_name, u.phone, u.bgmi_uid
+        FROM bookings b
+        JOIN users u ON u.id = b.user_id
+        WHERE b.scrim_id = ? AND b.user_id <> ? AND b.status IN ('pending', 'approved')");
+    $stmt->bind_param("ii", $scrimId, $userId);
+    $stmt->execute();
+    $rows = $stmt->get_result();
+
+    while ($row = $rows->fetch_assoc()) {
+        if ($phone !== '' && normalize_phone((string) $row['phone']) === $phone) {
+            return ['field' => 'phone', 'user' => $row];
+        }
+        if ($bgmiUid !== '' && normalize_bgmi_uid((string) $row['bgmi_uid']) === $bgmiUid) {
+            return ['field' => 'bgmi_uid', 'user' => $row];
+        }
+    }
+
+    return null;
+}
+
+function scrim_identity_conflict_message(string $field): string
+{
+    if ($field === 'phone') {
+        return 'This phone number already has a pending or approved registration for this scrim.';
+    }
+    return 'This BGMI UID already has a pending or approved registration for this scrim.';
+}
+
+function whatsapp_link(?string $phone, string $message = ''): ?string
+{
+    $normalized = normalize_phone($phone);
+    if ($normalized === '') {
+        return null;
+    }
+    if (strlen($normalized) === 10) {
+        $normalized = '91' . $normalized;
+    }
+    $url = 'https://wa.me/' . rawurlencode($normalized);
+    if ($message !== '') {
+        $url .= '?text=' . rawurlencode($message);
+    }
+    return $url;
+}
+
+function mailto_link(?string $email, string $subject = '', string $body = ''): ?string
+{
+    $email = trim((string) $email);
+    if ($email === '') {
+        return null;
+    }
+    $params = [];
+    if ($subject !== '') {
+        $params[] = 'subject=' . rawurlencode($subject);
+    }
+    if ($body !== '') {
+        $params[] = 'body=' . rawurlencode($body);
+    }
+    return 'mailto:' . rawurlencode($email) . ($params ? '?' . implode('&', $params) : '');
+}
+
 function default_prize_distribution(): array
 {
     return [

@@ -33,9 +33,9 @@ $rows = fetch_all_assoc($stmt);
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="min-h-screen bg-slate-950 text-white">
+<body class="flex min-h-screen flex-col bg-slate-950 text-white">
 <?php include_once __DIR__ . "/../includes/navbar.php"; ?>
-<div class="mx-auto max-w-7xl px-6 py-10">
+<div class="mx-auto w-full max-w-7xl flex-1 px-6 py-10">
   <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
     <h1 class="text-4xl font-black">My Match Registrations</h1>
     <div class="flex flex-wrap gap-2">
