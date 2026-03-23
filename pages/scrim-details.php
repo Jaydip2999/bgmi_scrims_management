@@ -85,8 +85,11 @@ $registrationLabel = $canJoin ? 'Open' : (((int) $scrim['available_slots'] <= 0 
         <?php elseif ($booking): ?>
           <span class="rounded-2xl bg-slate-950 px-5 py-3 text-sm text-slate-300">Your Status: <?php echo strtoupper(h($booking['status'])); ?><?php if (!empty($booking['payment_status'])): ?> | Payment: <?php echo strtoupper(h($booking['payment_status'])); ?><?php endif; ?></span>
         <?php else: ?>
-          <a href="payment.php?scrim_id=<?php echo $scrimId; ?>" class="rounded-full px-5 py-3 text-center font-semibold <?php echo $canJoin ? 'bg-amber-400 text-black' : 'cursor-not-allowed bg-slate-800 text-slate-500'; ?>"><?php echo $canJoin ? 'Join Scrim' : 'Joining Disabled'; ?></a>
-        <?php endif; ?>
+<button onclick="payNow(<?php echo $scrimId; ?>)" 
+class="bg-yellow-400 px-5 py-3 rounded-full text-black font-bold">
+Join & Pay
+</button>
+       <?php endif; ?>
       </div>
       <?php if (!$canJoin && !$booking): ?>
         <p class="mt-4 text-sm text-slate-400"><?php echo $matchStarted ? 'Registration stopped because match time has passed.' : ((int) $scrim['available_slots'] <= 0 || $scrim['registration_status'] === 'full' ? 'Registration stopped because all slots are full.' : ($registrationDeadline && time() >= $registrationDeadline ? 'Registration stopped 10 minutes before match start.' : 'Registration is currently closed by admin.')); ?></p>
@@ -197,5 +200,7 @@ function updateCountdown() {
 updateCountdown();
 setInterval(updateCountdown, 1000);
 </script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="../assets/js/payment.js"></script>
 </body>
 </html>

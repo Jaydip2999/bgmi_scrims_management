@@ -11,4 +11,6 @@ $dbname = "bgmi_scrims";
 $conn = new mysqli($servername, $username, $password, $dbname);
 $conn->set_charset("utf8mb4");
 $conn->query("SET time_zone = '+05:30'");
+
+
 ?>
