@@ -19,16 +19,19 @@ $existing->execute();
 $payment = $existing->get_result()->fetch_assoc();
 $error = $_GET['error'] ?? '';
 
-$upiId = 'yourupi@upi';
-$upiName = 'BGMI Scrims';
+$upiId = upi_id();
+$upiName = upi_name();
 $upiNote = $scrim['title'] . ' Entry Fee';
 $upiAmount = number_format((float) $scrim['entry_fee'], 2, '.', '');
-$upiLink = 'upi://pay?pa=' . rawurlencode($upiId)
-    . '&pn=' . rawurlencode($upiName)
-    . '&am=' . rawurlencode($upiAmount)
-    . '&cu=INR'
-    . '&tn=' . rawurlencode($upiNote);
-$upiQrUrl = 'https://quickchart.io/qr?size=260&text=' . rawurlencode($upiLink);
+$upiConfigured = $upiId !== '';
+$upiLink = $upiConfigured
+    ? 'upi://pay?pa=' . rawurlencode($upiId)
+        . '&pn=' . rawurlencode($upiName)
+        . '&am=' . rawurlencode($upiAmount)
+        . '&cu=INR'
+        . '&tn=' . rawurlencode($upiNote)
+    : '';
+$upiQrUrl = $upiConfigured ? 'https://quickchart.io/qr?size=260&text=' . rawurlencode($upiLink) : '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -54,9 +57,20 @@ $upiQrUrl = 'https://quickchart.io/qr?size=260&text=' . rawurlencode($upiLink);
         Latest payment status: <strong><?php echo strtoupper(h($payment['status'])); ?></strong>
       </div>
     <?php endif; ?>
+    <?php if (!$upiConfigured): ?>
+      <div class="mt-5 rounded-2xl bg-amber-500/20 px-4 py-3 text-amber-100">
+        Manual UPI payment abhi configured nahi hai. `UPI_ID` set karo ya Razorpay keys add karo.
+      </div>
+    <?php endif; ?>
     <div class="mt-6 grid gap-5 rounded-3xl border border-slate-800 bg-slate-950 p-4 sm:p-5 md:grid-cols-[220px_1fr]">
       <div class="rounded-2xl border border-slate-800 bg-white p-4">
-        <img src="<?php echo h($upiQrUrl); ?>" alt="UPI QR Code" class="mx-auto h-full w-full rounded-xl object-contain">
+        <?php if ($upiConfigured): ?>
+          <img src="<?php echo h($upiQrUrl); ?>" alt="UPI QR Code" class="mx-auto h-full w-full rounded-xl object-contain">
+        <?php else: ?>
+          <div class="flex h-full min-h-[180px] items-center justify-center rounded-xl border border-dashed border-slate-300 px-4 text-center text-sm text-slate-500">
+            UPI QR will appear after `UPI_ID` is configured.
+          </div>
+        <?php endif; ?>
       </div>
       <div class="flex flex-col justify-between gap-4">
         <div>
@@ -67,7 +81,7 @@ $upiQrUrl = 'https://quickchart.io/qr?size=260&text=' . rawurlencode($upiLink);
         <div class="grid gap-3 text-sm text-slate-300 sm:grid-cols-2">
           <div class="rounded-2xl border border-slate-800 bg-slate-900 p-4">
             <p class="text-slate-500">UPI ID</p>
-            <p id="upi-id" class="mt-1 font-semibold text-amber-300"><?php echo h($upiId); ?></p>
+            <p id="upi-id" class="mt-1 font-semibold text-amber-300"><?php echo h($upiConfigured ? $upiId : 'Not configured'); ?></p>
           </div>
           <div class="rounded-2xl border border-slate-800 bg-slate-900 p-4">
             <p class="text-slate-500">Amount</p>

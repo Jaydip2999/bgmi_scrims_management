@@ -1,6 +1,6 @@
 function payNow(scrim_id) {
 
-    fetch('/api/create_order.php', {
+    fetch('../api/create_order.php', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ scrim_id: scrim_id })
@@ -14,11 +14,11 @@ function payNow(scrim_id) {
         }
 
         var options = {
-            key: "rzp_test_xxxxxxxx",
+            key: order.key,
             amount: order.amount,
             currency: "INR",
-            name: "BGMI Scrims",
-            description: "Scrim Entry",
+            name: order.name,
+            description: order.description,
             order_id: order.id,
 
             handler: function (response) {
@@ -37,7 +37,7 @@ function payNow(scrim_id) {
 }
 
 function verifyPayment(response, scrim_id) {
-    fetch('/api/verify_payment.php', {
+    fetch('../api/verify_payment.php', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -47,9 +47,12 @@ function verifyPayment(response, scrim_id) {
             scrim_id: scrim_id
         })
     })
-    .then(res => res.text())
-    .then(msg => {
-        alert(msg);
+    .then(res => res.json())
+    .then(result => {
+        alert(result.error || (result.message + (result.slot ? " Slot No: " + result.slot : "")));
         location.reload();
+    })
+    .catch(() => {
+        alert("Payment verification failed");
     });
 }

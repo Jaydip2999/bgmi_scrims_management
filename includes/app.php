@@ -3,6 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+include_once __DIR__ . "/config.php";
 include_once __DIR__ . "/db.php";
 
 function app_query(mysqli $conn, string $sql): void
@@ -147,6 +148,9 @@ function ensure_schema(mysqli $conn): void
     ensure_column($conn, "users", "phone", "VARCHAR(30) DEFAULT NULL");
     ensure_column($conn, "users", "is_banned", "TINYINT(1) NOT NULL DEFAULT 0");
     ensure_column($conn, "payments", "transaction_ref", "VARCHAR(120) DEFAULT NULL");
+    ensure_column($conn, "payments", "gateway_order_id", "VARCHAR(120) DEFAULT NULL");
+    ensure_column($conn, "payments", "gateway_payment_id", "VARCHAR(120) DEFAULT NULL");
+    ensure_column($conn, "payments", "gateway_signature", "VARCHAR(255) DEFAULT NULL");
     ensure_column($conn, "bookings", "slot_number", "INT DEFAULT NULL");
     ensure_column($conn, "results", "payout_status", "ENUM('unpaid','paid') NOT NULL DEFAULT 'unpaid'");
     ensure_column($conn, "results", "payout_transaction_id", "VARCHAR(120) DEFAULT NULL");
@@ -240,6 +244,36 @@ function h(?string $value): string
 function format_money($amount): string
 {
     return "Rs " . number_format((float) $amount, 2);
+}
+
+function site_name(): string
+{
+    return SITE_NAME;
+}
+
+function razorpay_key_id(): string
+{
+    return trim((string) RAZORPAY_KEY_ID);
+}
+
+function razorpay_key_secret(): string
+{
+    return trim((string) RAZORPAY_KEY_SECRET);
+}
+
+function razorpay_is_configured(): bool
+{
+    return razorpay_key_id() !== '' && razorpay_key_secret() !== '';
+}
+
+function upi_id(): string
+{
+    return trim((string) UPI_ID);
+}
+
+function upi_name(): string
+{
+    return trim((string) UPI_NAME) !== '' ? trim((string) UPI_NAME) : site_name();
 }
 
 function normalize_phone(?string $phone): string

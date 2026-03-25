@@ -45,6 +45,7 @@ $registrationDeadline = scrim_registration_deadline($scrim);
 $matchStarted = strtotime((string) $scrim['match_time']) <= time();
 $canJoin = registration_is_open($scrim);
 $registrationLabel = $canJoin ? 'Open' : (((int) $scrim['available_slots'] <= 0 || $scrim['registration_status'] === 'full') ? 'Full' : 'Closed');
+$razorpayEnabled = razorpay_is_configured();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -85,12 +86,20 @@ $registrationLabel = $canJoin ? 'Open' : (((int) $scrim['available_slots'] <= 0 
         <?php elseif ($booking): ?>
           <span class="rounded-2xl bg-slate-950 px-5 py-3 text-sm text-slate-300">Your Status: <?php echo strtoupper(h($booking['status'])); ?><?php if (!empty($booking['payment_status'])): ?> | Payment: <?php echo strtoupper(h($booking['payment_status'])); ?><?php endif; ?></span>
         <?php else: ?>
-<button onclick="payNow(<?php echo $scrimId; ?>)" 
-class="bg-yellow-400 px-5 py-3 rounded-full text-black font-bold">
-Join & Pay
-</button>
+          <?php if ($razorpayEnabled): ?>
+            <button onclick="payNow(<?php echo $scrimId; ?>)" class="rounded-full bg-yellow-400 px-5 py-3 font-bold text-black">
+              Join & Pay
+            </button>
+          <?php else: ?>
+            <a href="payment.php?scrim_id=<?php echo $scrimId; ?>" class="rounded-full bg-yellow-400 px-5 py-3 text-center font-bold text-black">
+              Join & Upload Proof
+            </a>
+          <?php endif; ?>
        <?php endif; ?>
       </div>
+      <?php if (!$razorpayEnabled && !$booking): ?>
+        <p class="mt-4 text-sm text-amber-300">Razorpay abhi configured nahi hai, isliye manual payment proof flow use hoga.</p>
+      <?php endif; ?>
       <?php if (!$canJoin && !$booking): ?>
         <p class="mt-4 text-sm text-slate-400"><?php echo $matchStarted ? 'Registration stopped because match time has passed.' : ((int) $scrim['available_slots'] <= 0 || $scrim['registration_status'] === 'full' ? 'Registration stopped because all slots are full.' : ($registrationDeadline && time() >= $registrationDeadline ? 'Registration stopped 10 minutes before match start.' : 'Registration is currently closed by admin.')); ?></p>
       <?php endif; ?>

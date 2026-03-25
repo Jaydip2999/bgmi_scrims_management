@@ -1,6 +1,6 @@
 <?php
-define('RAZORPAY_KEY_ID', 'rzp_test_xxxxxxxx');
-define('RAZORPAY_KEY_SECRET', 'your_secret_key_here');
-
-// For production
-define('SITE_NAME', 'BGMI Scrims');
+define('SITE_NAME', getenv('SITE_NAME') ?: 'BGMI Scrims');
+define('RAZORPAY_KEY_ID', getenv('RAZORPAY_KEY_ID') ?: '');
+define('RAZORPAY_KEY_SECRET', getenv('RAZORPAY_KEY_SECRET') ?: '');
+define('UPI_ID', getenv('UPI_ID') ?: '');
+define('UPI_NAME', getenv('UPI_NAME') ?: SITE_NAME);
